@@ -82,7 +82,7 @@ if [ "${DoH_V}" != $CUR_V ]; then
 	cd ${DATA_DIR}
 	rm -R ${DATA_DIR}/dns-over-https-${DoH_V} ${DATA_DIR}/go ${DATA_DIR}/gopath
 elif [ "${DoH_V" == "CUR_V" ]; then
-	echo "---Versions match! Installed: v$CUR_V | Preffered: v${DoH_V}---"
+	echo "---Versions match! Installed: v$CUR_V | Preferred: v${DoH_V}---"
 fi
 
 echo "---Preparing Server---"
