@@ -26,6 +26,7 @@ if [ ! -f ${DATA_DIR}/doh-server/doh-server ]; then
     fi
 	tar xzf v${DoH_V}.tar.gz
 	touch dohinstalled-${DoH_V}
+    CUR_V=${DoH_V}
 	rm *.tar.gz
 	cd ${DATA_DIR}/dns-over-https-${DoH_V}
 	make
