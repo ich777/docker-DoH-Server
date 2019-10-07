@@ -3,7 +3,7 @@ FROM ubuntu
 MAINTAINER ich777
 
 RUN apt-get update
-RUN apt-get -y install wget curl software-properties-common build-essential git
+RUN apt-get -y install wget
 
 ENV DATA_DIR=/DoH
 ENV GO_DL_URL="https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz"
