@@ -1,4 +1,5 @@
 #!/bin/bash
+sleep infinity
 CUR_V="$(find ${DATA_DIR} -name dohinstalled-* | cut -d '-' -f 2,3)"
 
 echo "---Checking if DoH-Server is installed---"
@@ -40,7 +41,7 @@ else
 fi
 
 echo "---Version Check---"
-if [ "${DoH_V}" != $CUR_V ]; then
+if [ "${DoH_V}" != "$CUR_V" ]; then
 	echo "---Version missmatch v${CUR_V} installed, installing v${DoH_V}---"
     rm ${DATA_DIR}/dohinstalled-${CUR_V}
 	cd ${DATA_DIR}
