@@ -86,6 +86,7 @@ if [ ! -f ${DATA_DIR}/doh-server.conf ]; then
 		sleep infinity
 	fi
 fi
+find ${DATA_DIR} -name ".*" -exec rm -R -f {} \;
 chmod -R 770 ${DATA_DIR}
 
 echo "---Starting Server---"
