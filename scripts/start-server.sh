@@ -34,6 +34,10 @@ if [ ! -f ${DATA_DIR}/doh-server/doh-server ]; then
 	rm ${DATA_DIR}/doh-server/doh-server.conf
 	if wget https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server.conf ; then
     	echo "---Sucessfully downloaded configuration file 'doh-server-conf' located in the root directory of the container---"
+    else
+    	echo "---Something went wrong, can't download 'doh-server.conf', putting server in sleep mode---"
+        sleep infinity
+    fi
 	cd ${DATA_DIR}
 	rm -R ${DATA_DIR}/dns-over-https-${DoH_V} ${DATA_DIR}/go ${DATA_DIR}/gopath
 else
