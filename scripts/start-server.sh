@@ -76,7 +76,6 @@ elif [ "${DoH_V}" == "CUR_V" ]; then
 fi
 
 echo "---Preparing Server---"
-chmod -R 770 ${DATA_DIR}
 if [ ! -f ${DATA_DIR}/doh-server.conf ]; then
 	cd ${DATA_DIR}
 	if wget https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server.conf ; then
@@ -86,6 +85,7 @@ if [ ! -f ${DATA_DIR}/doh-server.conf ]; then
 		sleep infinity
 	fi
 fi
+chmod -R 770 ${DATA_DIR}
 
 echo "---Starting Server---"
 cd ${DATA_DIR}/doh-server
