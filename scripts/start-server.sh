@@ -1,5 +1,4 @@
 #!/bin/bash
-sleep infinity
 CUR_V="$(find ${DATA_DIR} -name dohinstalled-* | cut -d '-' -f 2,3)"
 
 echo "---Checking if DoH-Server is installed---"
@@ -32,12 +31,6 @@ if [ ! -f ${DATA_DIR}/doh-server/doh-server ]; then
 	make
 	mv ${DATA_DIR}/dns-over-https-${DoH_V}/doh-server/ ${DATA_DIR}
 	rm ${DATA_DIR}/doh-server/doh-server.conf
-	if wget https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server.conf ; then
-    	echo "---Sucessfully downloaded configuration file 'doh-server-conf' located in the root directory of the container---"
-    else
-    	echo "---Something went wrong, can't download 'doh-server.conf', putting server in sleep mode---"
-        sleep infinity
-    fi
 	cd ${DATA_DIR}
 	rm -R ${DATA_DIR}/dns-over-https-${DoH_V} ${DATA_DIR}/go ${DATA_DIR}/gopath
 else
@@ -76,22 +69,23 @@ if [ "${DoH_V}" != "$CUR_V" ]; then
     rm -R ${DATA_DIR}/doh-server
 	mv ${DATA_DIR}/dns-over-https-${DoH_V}/doh-server/ ${DATA_DIR}
 	rm ${DATA_DIR}/doh-server/doh-server.conf
-    if [ ! -f ${DATA_DIR}/doh-server.conf ]; then
-        if wget https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server.conf ; then
-            echo "---Sucessfully downloaded configuration file 'doh-server-conf' located in the root directory of the container---"
-        else
-            echo "---Something went wrong, can't download 'doh-server.conf', putting server in sleep mode---"
-            sleep infinity
-        fi
-    fi
 	cd ${DATA_DIR}
 	rm -R ${DATA_DIR}/dns-over-https-${DoH_V} ${DATA_DIR}/go ${DATA_DIR}/gopath
-elif [ "${DoH_V" == "CUR_V" ]; then
+elif [ "${DoH_V}" == "CUR_V" ]; then
 	echo "---Versions match! Installed: v$CUR_V | Preferred: v${DoH_V}---"
 fi
 
 echo "---Preparing Server---"
 chmod -R 770 ${DATA_DIR}
+if [ ! -f ${DATA_DIR}/doh-server.conf ]; then
+	cd ${DATA_DIR}
+	if wget https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server.conf ; then
+		echo "---Sucessfully downloaded configuration file 'doh-server-conf' located in the root directory of the container---"
+	else
+		echo "---Something went wrong, can't download 'doh-server.conf', putting server in sleep mode---"
+		sleep infinity
+	fi
+fi
 
 echo "---Starting Server---"
 cd ${DATA_DIR}/doh-server
