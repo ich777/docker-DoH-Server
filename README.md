@@ -3,12 +3,12 @@ This is a simple DoH Server for Unraid, it is based on the DoH Server component 
 
 You easily can hide your DNS querys from your ISP with this docker on Firefox or Chrome and even on Android with the Intra App (by default it is set to use the Cloudflare and Google DNS servers).
 
-As a special bonus you can hide all Ad's on your Android Device on the go without the need of a VPN (only the Intra app is needed https://getintra.org/)!
+As a special bonus you can hide all Ad's on your Android Device on the go without the need of a VPN (for Android Devices only the Intra app is needed https://getintra.org/)! Very usefull if you have kids and they should not visit certain sites or if you simply don't like Ad's on your Android Device.
 All you need is a PiHole, Webserver with an SSL Certificate & this Docker (i highly recommend you for the PiHole Docker: https://hub.docker.com/r/pihole/pihole | for the Webserver: https://hub.docker.com/r/linuxserver/letsencrypt you can also get this two apps in the CA Applications if you are on Unraid):
 
 1. Download PiHole and configure it for your homenetwork for (Bridge mode recommended eg: 192.168.1.5)
 2. Download LetsEncrypt and configure it and set up a domain for your dns eg: 'dns.server.net' (Bridge mode recommended eg: 192.168.1.6)
-3. Copy the nginx configuration from below in your .../nginx/site-conf/default at the very end and don't forget to change the proxy dns to the DoH-Server
+3. Copy the nginx configuration from below in your .../nginx/site-conf/default at the very end and don't forget to change the proxy dns to the DoH-Server (you don't have to do this with a sub domain it also works with the path/location)
 4. Download DoH-Server (Bridge mode recommended eg: 192.168.1.7)
 5. Edit the 'doh-server.conf' from the main directory and change the Upstream DNS resolver list to your PiHole adress in this example: 192.168.1.5 (there is then only one line and it should look like this: "192.168.1.5:53",)
 6. Restart the DoH-Server
@@ -18,6 +18,8 @@ All you need is a PiHole, Webserver with an SSL Certificate & this Docker (i hig
 
 
 Update Notice: If you want to upgrade to a newer version of the DoH-Server just enter the preferred version number (eg. '2.1.2' get them from here: https://github.com/m13253/dns-over-https/releases)
+
+The Docker runns by default on port: 8053 and handels querys in the directory /dns-query (eg: http://192.168.1.7:8053/dns-query)
 
 >**NOTE:** Please also check out the github page of the creater from DoH: https://github.com/m13253
 
@@ -45,7 +47,7 @@ docker run --name DoH-Server -d \
 >**NOTE** Please note that i recommend you to run this container in 'Bridge' mode and assign it a dedicated IP adress.
 
 
-#### nginx configuration:
+#### nginx configuration for the Linuxserver.io LetsEncrypt Docker (https://hub.docker.com/r/linuxserver/letsencrypt):
 ```
 server {
 	listen 443 ssl http2;
@@ -53,7 +55,7 @@ server {
 	include /config/nginx/ssl.conf;
 	include /config/nginx/error.conf;
 
-	server_name dns.minenet.at;
+	server_name dns.server.net;
 
 	location / {
 		proxy_pass http://192.168.1.7:8053/dns-query;   ### Please change the IP adress to the DoH-Server IP adress!
@@ -72,4 +74,4 @@ server {
 
 This Docker was mainly edited for better use with Unraid, if you don't use Unraid you should definitely try it!
 
-#### Support Thread: https://forums.unraid.net/topic/79530-support-ich777-gameserver-dockers/
+#### Support Thread: https://forums.unraid.net/topic/83786-support-ich777-application-dockers/
