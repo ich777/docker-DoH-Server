@@ -3,8 +3,8 @@ This is a simple DoH Server for Unraid, it is based on the DoH Server component 
 
 You easily can hide your DNS querys from your ISP with this docker on Firefox or Chrome and even on Android with the Intra App (by default it is set to use the Cloudflare and Google DNS servers).
 
-As a special bonus you can hide all Ad's on your Android Device on the go without the need of a VPN (for Android Devices only the Intra app is needed https://getintra.org/)! Very usefull if you have kids and they should not visit certain sites or if you simply don't like Ad's on your Android Device.
-All you need is a PiHole, Webserver with an SSL Certificate & this Docker (i highly recommend you for the PiHole Docker: https://hub.docker.com/r/pihole/pihole | for the Webserver: https://hub.docker.com/r/linuxserver/letsencrypt you can also get this two apps in the CA Applications if you are on Unraid):
+As a special bonus you can hide all Ad's on your Android Device on the go without the need of a VPN (for Android Devices only the Intra App is needed https://getintra.org/)! Very usefull if you have kids and they should not visit certain sites or if you simply don't like Ad's on your Android Device.
+All you need is a PiHole, Webserver with an SSL Certificate & this Docker (i highly recommend you for the PiHole Docker: https://hub.docker.com/r/pihole/pihole | for the Webserver: https://hub.docker.com/r/linuxserver/letsencrypt you also can get this two apps in the CA Applications if you are on Unraid):
 
 1. Download PiHole and configure it for your homenetwork for (Bridge mode recommended eg: 192.168.1.5)
 2. Download LetsEncrypt and configure it and set up a domain for your dns eg: 'dns.server.net' (Bridge mode recommended eg: 192.168.1.6)
@@ -16,8 +16,9 @@ All you need is a PiHole, Webserver with an SSL Certificate & this Docker (i hig
 8. On the Intra App go to Settings and click on 'DNS-over-HTTPS-Server' and change it to Custom URL and now type in your URL in this example: 'https://dns.server.net/' note that it must be in that format with 'https://' and the trailing '/' otherwise you can't click 'Accept'
 9. Congratulations you are now protected against Ad's on your Android Device.
 
+If you have any questions feel free to ask them on the support thread in the Unraid Forums.
 
-Update Notice: If you want to upgrade to a newer version of the DoH-Server just enter the preferred version number (eg. '2.1.2' get them from here: https://github.com/m13253/dns-over-https/releases)
+Update Notice: If you want to upgrade to a newer version of the DoH-Server just enter the preferred version number (eg. '2.1.2' without quotes, get them from here: https://github.com/m13253/dns-over-https/releases)
 
 The Docker runns by default on port: 8053 and handels querys in the directory /dns-query (eg: http://192.168.1.7:8053/dns-query)
 
