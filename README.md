@@ -50,6 +50,7 @@ docker run --name DoH-Server -d \
 
 #### nginx configuration for the Linuxserver.io LetsEncrypt Docker (https://hub.docker.com/r/linuxserver/letsencrypt):
 ```
+
 server {
 	listen 443 ssl http2;
 
@@ -71,7 +72,8 @@ server {
 		proxy_set_header X-Forwarded-Host $http_host;
 		}
 }
-´´´
+
+```
 
 This Docker was mainly edited for better use with Unraid, if you don't use Unraid you should definitely try it!
 
