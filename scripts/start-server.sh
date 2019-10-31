@@ -79,16 +79,60 @@ elif [ "${DoH_V}" == "$CUR_V" ]; then
 	echo "---Versions match! Installed: v$CUR_V | Preferred: v${DoH_V}---"
 fi
 
-echo "---Preparing Server---"
-if [ ! -f ${DATA_DIR}/doh-server.conf ]; then
-	cd ${DATA_DIR}
-	if wget https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server.conf ; then
-		echo "---Sucessfully downloaded configuration file 'doh-server-conf' located in the root directory of the container---"
+if [ "$(echo ${DoH_V} | sed -e 's/\.//g')" -ge "220" ]; then
+	if [ ! -f ${DATA_DIR}/doh-server.conf ]; then
+		cd ${DATA_DIR}
+		if wget -qO doh-server.conf "https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server-2.2.0.conf" --show-progress ; then
+        	echo "---Sucessfully downloaded configuration file 'doh-server.conf' located in the root directory of the container---"
+		else
+			echo "---Something went wrong, can't download 'doh-server.conf', putting server in sleep mode---"
+			sleep infinity
+		fi     
+    else
+    	if grep -rq 'tcp_only = ' ${DATA_DIR}/doh-server.conf; then
+        	echo "---You got an old configuration file, downloading new config file---"
+            cd ${DATA_DIR}
+			if wget -qO doh-server-new.conf "https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server-2.2.0.conf" --show-progress ; then
+				echo "---Sucessfully downloaded configuration file 'doh-server-new.conf' located in the root directory of the container---"
+			else
+				echo "---Something went wrong, can't download 'doh-server-new.conf', putting server in sleep mode---"
+				sleep infinity
+			fi
+            chmod 770 ${DATA_DIR}/doh-server-new.conf
+            echo "-------------------------------------------------------------------------"
+            echo "-----New configuration file downloaded, please check your server dir!----"
+            echo "---Delete the old 'doh-server.conf' and edit the 'doh-server-new.conf'---"
+            echo "---to your preferred settings and rename it to 'doh-server.conf' then----"
+            echo "---------restart the container! Putting server into sleep mode!----------"
+            echo "-------------------------------------------------------------------------"
+            sleep infinity
+		fi
+	fi
+else
+	if [ ! -f ${DATA_DIR}/doh-server.conf ]; then
+		cd ${DATA_DIR}
+		if wget -qO doh-server.conf "https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server-2.1.9.conf" --show-progress ; then
+			echo "---Sucessfully downloaded configuration file 'doh-server.conf' located in the root directory of the container---"
+		else
+			echo "---Something went wrong, can't download 'doh-server.conf', putting server in sleep mode---"
+			sleep infinity
+		fi
 	else
-		echo "---Something went wrong, can't download 'doh-server.conf', putting server in sleep mode---"
-		sleep infinity
+    	if grep -rq 'tcp_only = ' ${DATA_DIR}/doh-server.conf ; then
+        	echo
+        else
+        	echo "-------------------------------------------------------------------"
+        	echo "-----You got a new configuration file and an old server version----"
+            echo "---Please change the version number to greater or equal to 2.2.0---"
+            echo "---or delete the 'doh-server.conf' file and restart the container--"
+            echo "------------------Putting server into sleep mode!------------------"
+            echo "-------------------------------------------------------------------"
+            sleep infinity
+		fi
 	fi
 fi
+
+echo "---Preparing Server---"
 find ${DATA_DIR} -name ".*" -exec rm -R -f {} \;
 chmod -R 770 ${DATA_DIR}
 
