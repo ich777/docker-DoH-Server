@@ -1,5 +1,7 @@
 #!/bin/bash
 CUR_V="$(find ${DATA_DIR} -name dohinstalled-* | cut -d '-' -f 2,3)"
+echo "---Setting umask to ${UMASK}---"
+umask ${UMASK}
 
 echo "---Checking if DoH-Server is installed---"
 if [ ! -f ${DATA_DIR}/doh-server/doh-server ]; then
@@ -131,7 +133,7 @@ fi
 
 echo "---Preparing Server---"
 find ${DATA_DIR} -name ".*" -exec rm -R -f {} \;
-chmod -R 770 ${DATA_DIR}
+chmod -R 777 ${DATA_DIR}
 
 echo "---Starting Server---"
 cd ${DATA_DIR}/doh-server
