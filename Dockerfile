@@ -8,6 +8,7 @@ RUN apt-get -y install wget curl software-properties-common build-essential git
 ENV DATA_DIR=/DoH
 ENV GO_DL_URL="https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz"
 ENV DoH_V=2.1.2
+ENV UMASK=000
 ENV UID=99
 ENV GID=100
 
