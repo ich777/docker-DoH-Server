@@ -28,7 +28,7 @@ The Docker runns by default on port: 8053 and handels querys in the directory /d
 ## Env params
 | Name | Value | Example |
 | --- | --- | --- |
-| DoH_V | Version to install (or 'latest' if you want to download the latest version) | latest |
+| DoH_V | Version to install (set 'latest' to install the latest version) | latest |
 | GO_DL_URL | The download url for Golang | https://dl.google.com/go/go1.1... |
 | UID | User Identifier | 99 |
 | GID | Group Identifier | 100 |
