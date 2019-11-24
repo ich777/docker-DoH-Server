@@ -18,16 +18,17 @@ All you need is a PiHole, Webserver with an SSL Certificate & this Docker (i hig
 
 If you have any questions feel free to ask them on the support thread in the Unraid Forums.
 
-Update Notice: If you want to upgrade to a newer version of the DoH-Server just enter the preferred version number (eg. '2.1.2' without quotes, get them from here: https://github.com/m13253/dns-over-https/releases)
+Update Notice: If you want to upgrade to a newer version of the DoH-Server just enter the preferred version number (eg. '2.1.2' without quotes, get them from here: https://github.com/m13253/dns-over-https/releases or set it to 'latest' without quotes to check on every startup for a new version)
 
 The Docker runns by default on port: 8053 and handels querys in the directory /dns-query (eg: http://192.168.1.7:8053/dns-query)
+
 
 >**NOTE:** Please also check out the github page of the creater from DoH: https://github.com/m13253
 
 ## Env params
 | Name | Value | Example |
 | --- | --- | --- |
-| DoH_V | Version to install | 2.1.2 |
+| DoH_V | Version to install (or 'latest' if you want to download the latest version) | latest |
 | GO_DL_URL | The download url for Golang | https://dl.google.com/go/go1.1... |
 | UID | User Identifier | 99 |
 | GID | Group Identifier | 100 |
@@ -35,7 +36,7 @@ The Docker runns by default on port: 8053 and handels querys in the directory /d
 ## Run example
 ```
 docker run --name DoH-Server -d \
-	--env 'DoH_V=2.1.2' \
+	--env 'DoH_V=latest' \
 	--env 'GO_DL_URL=https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz' \
 	--env 'UID=99' \
 	--env 'GID=100' \
