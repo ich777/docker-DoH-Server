@@ -1,5 +1,9 @@
 #!/bin/bash
 CUR_V="$(find ${DATA_DIR} -name dohinstalled-* | cut -d '-' -f 2,3)"
+LAT_V="$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/m13253/dns-over-https/tags | jq -r '.[0].name' | cut -c2-)"
+if [ "${DoH-V}" == "latest" ]; then
+	DoH-V=$LAT_V
+fi
 echo "---Setting umask to ${UMASK}---"
 umask ${UMASK}
 
