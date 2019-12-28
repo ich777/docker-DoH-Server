@@ -1,26 +1,26 @@
-FROM ubuntu
+FROM ich777/debian-baseimage
 
-MAINTAINER ich777
+LABEL maintainer="admin@minenet.at"
 
-RUN apt-get update
-RUN apt-get -y install wget curl software-properties-common build-essential git jq
+RUN apt-get update && \
+	apt-get -y install --no-install-recommends curl software-properties-common build-essential git jq && \
+	rm -rf /var/lib/apt/lists/*
 
 ENV DATA_DIR=/DoH
 ENV GO_DL_URL="https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz"
-ENV DoH_V=2.1.2
+ENV DoH_V="latest"
 ENV UMASK=000
 ENV UID=99
 ENV GID=100
 
-RUN mkdir $DATA_DIR
-RUN useradd -d $DATA_DIR -s /bin/bash --uid $UID --gid $GID DoH
-RUN chown -R DoH $DATA_DIR
-
-RUN ulimit -n 2048
+RUN mkdir $DATA_DIR && \
+	useradd -d $DATA_DIR -s /bin/bash --uid $UID --gid $GID DoH && \
+	chown -R DoH $DATA_DIR && \
+	ulimit -n 2048
 
 ADD /scripts/ /opt/scripts/
-RUN chmod -R 770 /opt/scripts/
-RUN chown -R DoH /opt/scripts
+RUN chmod -R 770 /opt/scripts/ && \
+	chown -R DoH /opt/scripts
 
 USER DoH
 
