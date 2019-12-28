@@ -1,6 +1,5 @@
 FROM ich777/debian-baseimage
 
-
 LABEL maintainer="admin@minenet.at"
 
 RUN apt-get update && \
