@@ -4,8 +4,6 @@ LAT_V="$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.
 if [ "${DoH_V}" == "latest" ]; then
 	DoH_V=$LAT_V
 fi
-echo "---Setting umask to ${UMASK}---"
-umask ${UMASK}
 
 echo "---Checking if DoH-Server is installed---"
 if [ ! -f ${DATA_DIR}/doh-server/doh-server ]; then
@@ -101,7 +99,7 @@ if [ "$(echo ${DoH_V} | sed -e 's/\.//g')" -ge "220" ]; then
 				echo "---Something went wrong, can't download 'doh-server-new.conf', putting server in sleep mode---"
 				sleep infinity
 			fi
-            chmod 770 ${DATA_DIR}/doh-server-new.conf
+            chmod ${DATA_PERM} ${DATA_DIR}/doh-server-new.conf
             echo "-------------------------------------------------------------------------"
             echo "-----New configuration file downloaded, please check your server dir!----"
             echo "---Delete the old 'doh-server.conf' and edit the 'doh-server-new.conf'---"
@@ -137,7 +135,7 @@ fi
 
 echo "---Preparing Server---"
 find ${DATA_DIR} -name ".*" -exec rm -R -f {} \;
-chmod -R 777 ${DATA_DIR}
+chmod -R ${DATA_PERM} ${DATA_DIR}
 
 echo "---Starting Server---"
 cd ${DATA_DIR}/doh-server
