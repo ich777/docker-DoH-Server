@@ -32,8 +32,6 @@ su ${USER} -c "/opt/scripts/start-server.sh" &
 killpid="$!"
 while true
 do
-	if ! pgrep -f start-server.sh >/dev/null ; then
-		exit 0
-	fi
-	sleep 5
+	wait $killpid
+	exit 0;
 done
