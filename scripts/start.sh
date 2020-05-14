@@ -21,11 +21,7 @@ chown -R ${UID}:${GID} ${DATA_DIR}
 
 term_handler() {
 	kill -SIGTERM "$(pidof doh-server)"
-	while kill -0 "$(pidof doh-server)" 2>/dev/null
-	do
-		sleep 0.5
-	done
-	kill -SIGTERM $killpid
+	tail --pid="$(pidof doh-server)" -f 2>/dev/null
 	exit 143;
 }
 
