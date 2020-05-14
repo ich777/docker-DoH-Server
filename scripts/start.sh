@@ -18,12 +18,14 @@ fi
 echo "---Starting...---"
 chown -R ${UID}:${GID} /opt/scripts
 chown -R ${UID}:${GID} ${DATA_DIR}
-killpid=0
+
 term_handler() {
-	if [ $killpid -ne 0 ]; then
-		kill -SIGTERM "$killpid"
-		wait "$killpid"
-	fi
+	kill -SIGTERM "$(pidof doh-server)"
+	while kill -0 "$(pidof doh-server)" 2>/dev/null
+	do
+		sleep 0.5
+	done
+	kill -SIGTERM $killpid
 	exit 143;
 }
 
