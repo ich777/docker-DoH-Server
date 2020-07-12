@@ -18,6 +18,8 @@ All you need is a PiHole, Webserver with an SSL Certificate & this Docker (i hig
 
 If you have any questions feel free to ask them on the support thread in the Unraid Forums.
 
+I strongly recommend you to run the container in custom mode and give it a static IP address so that you expose all ports from the container and to avoid any network problems.&#xD; 
+
 Update Notice: If you want to upgrade to a newer version of the DoH-Server just enter the preferred version number (eg. '2.1.2' without quotes, get them from here: https://github.com/m13253/dns-over-https/releases or set it to 'latest' without quotes to check on every startup for a new version)
 
 The Docker runns by default on port: 8053 and handels querys in the directory /dns-query (eg: http://192.168.1.7:8053/dns-query)
@@ -41,7 +43,7 @@ docker run --name DoH-Server -d \
 	--env 'UID=99' \
 	--env 'GID=100' \
 	--volume /mnt/user/appdata/doh-server:/DoH \
-    --net=br1 \
+    --net=br0 \
     --ip=192.168.1.7 \
     --restart=unless-stopped\
 	ich777/doh-server
