@@ -1,145 +1,49 @@
 #!/bin/bash
-CUR_V="$(find ${DATA_DIR} -name dohinstalled-* | cut -d '-' -f 2,3)"
-LAT_V="$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/m13253/dns-over-https/tags | jq -r '.[0].name' | cut -c2-)"
-if [ "${DoH_V}" == "latest" ]; then
-	DoH_V=$LAT_V
+CUR_V="$(find ${DATA_DIR} -name DoH-Server-v*.tar.gz | cut -d '-' -f 3,4 | cut -d 'v' -f2 | sed 's/\.tar\.gz//g')"
+LAT_V="$(wget -qO- https://github.com/ich777/versions/raw/master/DoH | grep FORK | cut -d '=' -f2)"
+if [ -z "$LAT_V" ]; then
+	LAT_V="$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/m13253/dns-over-https/tags | jq -r '.[0].name' | cut -c2-)"
 fi
-
-echo "---Checking if DoH-Server is installed---"
-if [ ! -z "$LAT_V" ]; then
-	if [ ! -f ${DATA_DIR}/doh-server/doh-server ]; then
-		echo "---DoH-Server not installed, installing---"
-	    cd ${DATA_DIR}
-	    if wget ${GO_DL_URL} ; then
-			echo "---Sucessfully downloaded Golang---"
-	    else
-			echo "---Something went wrong, can't download Golang, putting server in sleep mode---"
-			sleep infinity
-	    fi
-	    tar xzf go*
-	    export GOROOT=/DoH/go
-	    export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-	    if [ ! -d ${DATA_DIR}/gopath ]; then
-	    	mkdir gopath
-	    fi
-	    export GOPATH=/DoH/gopath/
-		if wget https://github.com/m13253/dns-over-https/archive/v${DoH_V}.tar.gz ; then
-	    	echo "---Sucessfully downloaded DoH---"
-	    else
-	    	echo "---Something went wrong, can't download DoH, putting server in sleep mode---"
-	        sleep infinity
-	    fi
-		tar xzf v${DoH_V}.tar.gz
-		touch dohinstalled-${DoH_V}
-	    CUR_V=${DoH_V}
-		rm *.tar.gz
-		cd ${DATA_DIR}/dns-over-https-${DoH_V}
-		make
-		mv ${DATA_DIR}/dns-over-https-${DoH_V}/doh-server/ ${DATA_DIR}
-		rm ${DATA_DIR}/doh-server/doh-server.conf
-		cd ${DATA_DIR}
-		rm -R ${DATA_DIR}/dns-over-https-${DoH_V} ${DATA_DIR}/go ${DATA_DIR}/gopath
+if [ -z "$LAT_V" ]; then
+	if [ ! -z "$CUR_V" ]; then
+		echo "---Can't get latest version of DoH-Server falling back to v$CUR_V---"
+		LAT_V="$CUR_V"
 	else
-		echo "---DoH-Server found!---"
+		echo "---Something went wrong, can't get latest version of DoH, putting container into sleep mode---"
+		sleep infinity
 	fi
-else
-	echo "---Can't get latest version, putting server into sleep mode---"
-    sleep infinity
 fi
 
 echo "---Version Check---"
-if [ ! -z "$LAT_V" ]; then
-	if [ "${DoH_V}" != "$CUR_V" ]; then
-		echo "---Version missmatch v${CUR_V} installed, installing v${DoH_V}---"
-	    rm ${DATA_DIR}/dohinstalled-${CUR_V}
-		cd ${DATA_DIR}
-	    if wget ${GO_DL_URL} ; then
-			echo "---Sucessfully downloaded Golang---"
-	    else
-			echo "---Something went wrong, can't download Golang, putting server in sleep mode---"
-			sleep infinity
-	    fi
-	    tar xzf go*
-	    export GOROOT=/DoH/go
-	    export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-	    if [ ! -d ${DATA_DIR}/gopath ]; then
-	    	mkdir gopath
-	    fi
-	    export GOPATH=/DoH/gopath/
-		if wget https://github.com/m13253/dns-over-https/archive/v${DoH_V}.tar.gz ; then
-	    	echo "---Sucessfully downloaded DoH---"
-	    else
-	    	echo "---Something went wrong, can't download DoH, putting server in sleep mode---"
-	        sleep infinity
-	    fi
-		tar xzf v${DoH_V}.tar.gz
-		touch dohinstalled-${DoH_V}
-		rm *.tar.gz
-		cd ${DATA_DIR}/dns-over-https-${DoH_V}
-		make
-	    rm -R ${DATA_DIR}/doh-server
-		mv ${DATA_DIR}/dns-over-https-${DoH_V}/doh-server/ ${DATA_DIR}
-		rm ${DATA_DIR}/doh-server/doh-server.conf
-		cd ${DATA_DIR}
-		rm -R ${DATA_DIR}/dns-over-https-${DoH_V} ${DATA_DIR}/go ${DATA_DIR}/gopath
-	elif [ "${DoH_V}" == "$CUR_V" ]; then
-		echo "---Versions match! Installed: v$CUR_V | Preferred: v${DoH_V}---"
-	fi
-else
-	echo "---Can't get latest version, continuing---"
-fi
-
-if [ "$(echo ${DoH_V} | sed -e 's/\.//g')" -ge "220" ]; then
-	if [ ! -f ${DATA_DIR}/doh-server.conf ]; then
-		cd ${DATA_DIR}
-		if wget -qO doh-server.conf "https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server-2.2.0.conf" --show-progress ; then
-        	echo "---Sucessfully downloaded configuration file 'doh-server.conf' located in the root directory of the container---"
-		else
-			echo "---Something went wrong, can't download 'doh-server.conf', putting server in sleep mode---"
-			sleep infinity
-		fi     
+if [ -z "$CUR_V" ]; then
+	echo "---DoH-Server not installed, installing---"
+    cd ${DATA_DIR}
+	if wget -q -nc --show-progress --progress=bar:force:noscroll -O ${DATA_DIR}/DoH-Server-v$LAT_V.tar.gz https://github.com/ich777/dns-over-https/releases/download/$LAT_V/DoH-Server-v$LAT_V.tar.gz ; then
+    	echo "---Sucessfully downloaded DoH---"
     else
-    	if grep -rq 'tcp_only = ' ${DATA_DIR}/doh-server.conf; then
-        	echo "---You got an old configuration file, downloading new config file---"
-            cd ${DATA_DIR}
-			if wget -qO doh-server-new.conf "https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server-2.2.0.conf" --show-progress ; then
-				echo "---Sucessfully downloaded configuration file 'doh-server-new.conf' located in the root directory of the container---"
-			else
-				echo "---Something went wrong, can't download 'doh-server-new.conf', putting server in sleep mode---"
-				sleep infinity
-			fi
-            chmod ${DATA_PERM} ${DATA_DIR}/doh-server-new.conf
-            echo "-------------------------------------------------------------------------"
-            echo "-----New configuration file downloaded, please check your server dir!----"
-            echo "---Delete the old 'doh-server.conf' and edit the 'doh-server-new.conf'---"
-            echo "---to your preferred settings and rename it to 'doh-server.conf' then----"
-            echo "---------restart the container! Putting server into sleep mode!----------"
-            echo "-------------------------------------------------------------------------"
-            sleep infinity
-		fi
+    	echo "---Something went wrong, can't download DoH, putting server in sleep mode---"
+        sleep infinity
+    fi
+	if [ ! -d ${DATA_DIR}/doh-server ]; then
+		mkdir ${DATA_DIR}/doh-server
 	fi
-else
-	if [ ! -f ${DATA_DIR}/doh-server.conf ]; then
-		cd ${DATA_DIR}
-		if wget -qO doh-server.conf "https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server-2.1.9.conf" --show-progress ; then
-			echo "---Sucessfully downloaded configuration file 'doh-server.conf' located in the root directory of the container---"
-		else
-			echo "---Something went wrong, can't download 'doh-server.conf', putting server in sleep mode---"
-			sleep infinity
-		fi
-	else
-    	if grep -rq 'tcp_only = ' ${DATA_DIR}/doh-server.conf ; then
-        	echo
-        else
-        	echo "-------------------------------------------------------------------"
-        	echo "-----You got a new configuration file and an old server version----"
-            echo "---Please change the version number to greater or equal to 2.2.0---"
-            echo "---or delete the 'doh-server.conf' file and restart the container--"
-            echo "------------------Putting server into sleep mode!------------------"
-            echo "-------------------------------------------------------------------"
-            sleep infinity
-		fi
+	tar -C ${DATA_DIR}/doh-server -xzf ${DATA_DIR}/DoH-Server-v$LAT_V.tar.gz
+elif [ "$CUR_V" != "$LAT_V" ]; then
+	echo "---Version missmatch, installed v$CUR_V, downloading and installing latest v$LAT_V...---"
+    cd ${DATA_DIR}
+	rm -R ${DATA_DIR}/doh-server ${DATA_DIR}/DoH-Server-v$CUR_V.tar.gz
+	if wget -q -nc --show-progress --progress=bar:force:noscroll -O ${DATA_DIR}/DoH-Server-v$LAT_V.tar.gz https://github.com/ich777/dns-over-https/releases/download/$LAT_V/DoH-Server-v$LAT_V.tar.gz ; then
+    	echo "---Sucessfully downloaded DoH---"
+    else
+    	echo "---Something went wrong, can't download DoH, putting server in sleep mode---"
+        sleep infinity
+    fi
+	if [ ! -d ${DATA_DIR}/doh-server ]; then
+		mkdir ${DATA_DIR}/doh-server
 	fi
+	tar -C ${DATA_DIR}/doh-server -xzf ${DATA_DIR}/DoH-Server-v$LAT_V.tar.gz
+elif [ "$CUR_V" == "$LAT_V" ]; then
+	echo "---DoH-Server v$CUR_V up-to-date---"
 fi
 
 echo "---Preparing Server---"
