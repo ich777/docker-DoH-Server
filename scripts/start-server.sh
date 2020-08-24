@@ -21,7 +21,7 @@ if [ -z "$CUR_V" ]; then
 	if wget -q -nc --show-progress --progress=bar:force:noscroll -O ${DATA_DIR}/DoH-Server-v$LAT_V.tar.gz https://github.com/ich777/dns-over-https/releases/download/$LAT_V/DoH-Server-v$LAT_V.tar.gz ; then
     	echo "---Sucessfully downloaded DoH---"
     else
-    	echo "---Something went wrong, can't download DoH, putting server in sleep mode---"
+    	echo "---Something went wrong, can't download DoH, putting container in sleep mode---"
         sleep infinity
     fi
 	if [ ! -d ${DATA_DIR}/doh-server ]; then
@@ -35,7 +35,7 @@ elif [ "$CUR_V" != "$LAT_V" ]; then
 	if wget -q -nc --show-progress --progress=bar:force:noscroll -O ${DATA_DIR}/DoH-Server-v$LAT_V.tar.gz https://github.com/ich777/dns-over-https/releases/download/$LAT_V/DoH-Server-v$LAT_V.tar.gz ; then
     	echo "---Sucessfully downloaded DoH---"
     else
-    	echo "---Something went wrong, can't download DoH, putting server in sleep mode---"
+    	echo "---Something went wrong, can't download DoH, putting container in sleep mode---"
         sleep infinity
     fi
 	if [ ! -d ${DATA_DIR}/doh-server ]; then
@@ -46,10 +46,11 @@ elif [ "$CUR_V" == "$LAT_V" ]; then
 	echo "---DoH-Server v$CUR_V up-to-date---"
 fi
 
-echo "---Preparing Server---"
+echo "---Preparing DoH-Server---"
 find ${DATA_DIR} -name ".*" -exec rm -R -f {} \;
+rm -R ${DATA_DIR}/dohinstalled-* ${DATA_DIR}/gopath 2&>/dev/null 
 chmod -R ${DATA_PERM} ${DATA_DIR}
 
-echo "---Starting Server---"
+echo "---Starting DoH-Server---"
 cd ${DATA_DIR}/doh-server
 ${DATA_DIR}/doh-server/doh-server -conf ${DATA_DIR}/doh-server.conf
