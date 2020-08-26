@@ -1,5 +1,6 @@
 #!/bin/bash
-CUR_V="$(find ${DATA_DIR} -name DoH-Server-v*.tar.gz | cut -d '-' -f 3,4 | cut -d 'v' -f2 | sed 's/\.tar\.gz//g')"
+ARCH="armv7"
+CUR_V="$(find ${DATA_DIR} -name DoH-Server-v*-$ARCH.tar.gz | cut -d '-' -f 3,4 | cut -d 'v' -f2 | sed 's/\.tar\.gz//g')"
 LAT_V="$(wget -qO- https://github.com/ich777/versions/raw/master/DoH | grep FORK | cut -d '=' -f2)"
 if [ -z "$LAT_V" ]; then
 	LAT_V="$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/m13253/dns-over-https/tags | jq -r '.[0].name' | cut -c2-)"
@@ -18,7 +19,7 @@ echo "---Version Check---"
 if [ -z "$CUR_V" ]; then
 	echo "---DoH-Server not installed, installing---"
     cd ${DATA_DIR}
-	if wget -q -nc --show-progress --progress=bar:force:noscroll -O ${DATA_DIR}/DoH-Server-v$LAT_V.tar.gz https://github.com/ich777/dns-over-https/releases/download/$LAT_V/DoH-Server-v$LAT_V.tar.gz ; then
+	if wget -q -nc --show-progress --progress=bar:force:noscroll -O ${DATA_DIR}/DoH-Server-v$LAT_V-$ARCH.tar.gz https://github.com/ich777/dns-over-https/releases/download/$LAT_V/DoH-Server-v$LAT_V-$ARCH.tar.gz ; then
     	echo "---Sucessfully downloaded DoH---"
     else
     	echo "---Something went wrong, can't download DoH, putting container in sleep mode---"
@@ -27,12 +28,12 @@ if [ -z "$CUR_V" ]; then
 	if [ ! -d ${DATA_DIR}/doh-server ]; then
 		mkdir ${DATA_DIR}/doh-server
 	fi
-	tar -C ${DATA_DIR}/doh-server -xzf ${DATA_DIR}/DoH-Server-v$LAT_V.tar.gz
+	tar -C ${DATA_DIR}/doh-server -xzf ${DATA_DIR}/DoH-Server-v$LAT_V-$ARCH.tar.gz
 elif [ "$CUR_V" != "$LAT_V" ]; then
 	echo "---Version missmatch, installed v$CUR_V, downloading and installing latest v$LAT_V...---"
     cd ${DATA_DIR}
-	rm -R ${DATA_DIR}/doh-server ${DATA_DIR}/DoH-Server-v$CUR_V.tar.gz
-	if wget -q -nc --show-progress --progress=bar:force:noscroll -O ${DATA_DIR}/DoH-Server-v$LAT_V.tar.gz https://github.com/ich777/dns-over-https/releases/download/$LAT_V/DoH-Server-v$LAT_V.tar.gz ; then
+	rm -R ${DATA_DIR}/doh-server ${DATA_DIR}/DoH-Server-v$CUR_V-$ARCH.tar.gz
+	if wget -q -nc --show-progress --progress=bar:force:noscroll -O ${DATA_DIR}/DoH-Server-v$LAT_V-$ARCH.tar.gz https://github.com/ich777/dns-over-https/releases/download/$LAT_V/DoH-Server-v$LAT_V-$ARCH.tar.gz ; then
     	echo "---Sucessfully downloaded DoH---"
     else
     	echo "---Something went wrong, can't download DoH, putting container in sleep mode---"
@@ -41,7 +42,7 @@ elif [ "$CUR_V" != "$LAT_V" ]; then
 	if [ ! -d ${DATA_DIR}/doh-server ]; then
 		mkdir ${DATA_DIR}/doh-server
 	fi
-	tar -C ${DATA_DIR}/doh-server -xzf ${DATA_DIR}/DoH-Server-v$LAT_V.tar.gz
+	tar -C ${DATA_DIR}/doh-server -xzf ${DATA_DIR}/DoH-Server-v$LAT_V-$ARCH.tar.gz
 elif [ "$CUR_V" == "$LAT_V" ]; then
 	echo "---DoH-Server v$CUR_V up-to-date---"
 fi
