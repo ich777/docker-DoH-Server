@@ -1,6 +1,6 @@
 #!/bin/bash
 ARCH="armv7"
-CUR_V="$(find ${DATA_DIR} -name DoH-Server-v*-$ARCH.tar.gz | cut -d '-' -f 3,4 | cut -d 'v' -f2 | sed 's/\.tar\.gz//g')"
+CUR_V="$(find ${DATA_DIR} -name DoH-Server-v*-$ARCH.tar.gz | cut -d '-' -f 3 | cut -d 'v' -f2 | sed 's/\.tar\.gz//g')"
 LAT_V="$(wget -qO- https://github.com/ich777/versions/raw/master/DoH | grep FORK | cut -d '=' -f2)"
 if [ -z "$LAT_V" ]; then
 	LAT_V="$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/m13253/dns-over-https/tags | jq -r '.[0].name' | cut -c2-)"
@@ -48,6 +48,15 @@ elif [ "$CUR_V" == "$LAT_V" ]; then
 fi
 
 echo "---Preparing DoH-Server---"
+if [ ! -f ${DATA_DIR}/doh-server.conf ]; then
+	cd ${DATA_DIR}
+	if wget -qO doh-server.conf "https://raw.githubusercontent.com/ich777/docker-DoH/master/config/doh-server-2.2.0.conf" --show-progress ; then
+		echo "---Sucessfully downloaded configuration file 'doh-server.conf' located in the root directory of the container---"
+	else
+		echo "---Something went wrong, can't download 'doh-server.conf', putting server in sleep mode---"
+		sleep infinity
+	fi
+fi
 find ${DATA_DIR} -name ".*" -exec rm -R -f {} \;
 rm -R ${DATA_DIR}/dohinstalled-* ${DATA_DIR}/gopath 2&>/dev/null 
 chmod -R ${DATA_PERM} ${DATA_DIR}
