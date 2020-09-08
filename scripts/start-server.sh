@@ -1,5 +1,5 @@
 #!/bin/bash
-ARCH="armv7"
+ARCH="arm64"
 CUR_V="$(find ${DATA_DIR} -name DoH-Server-v*-$ARCH.tar.gz | cut -d '-' -f 3 | cut -d 'v' -f2 | sed 's/\.tar\.gz//g')"
 LAT_V="$(wget -qO- https://github.com/ich777/versions/raw/master/DoH | grep FORK | cut -d '=' -f2)"
 if [ -z "$LAT_V" ]; then
