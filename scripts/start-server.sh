@@ -61,6 +61,16 @@ find ${DATA_DIR} -name ".*" -exec rm -R -f {} \;
 rm -R ${DATA_DIR}/dohinstalled-* ${DATA_DIR}/gopath 2&>/dev/null 
 chmod -R ${DATA_PERM} ${DATA_DIR}
 
+echo "+-------------------------------------------------------------"
+echo "|"
+echo "| This container for ARM is deprecated and is no"
+echo "| longer actively maintained or further developed!"
+echo "|"
+echo "|  Container will start in 60 seconds!"
+echo "|"
+echo "+-------------------------------------------------------------"
+sleep 60
+
 echo "---Starting DoH-Server---"
 cd ${DATA_DIR}/doh-server
 ${DATA_DIR}/doh-server/doh-server -conf ${DATA_DIR}/doh-server.conf
